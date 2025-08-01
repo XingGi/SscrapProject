@@ -1,0 +1,27 @@
+AdminSscrap
+12345678
+
+==========================================
+
+Tentu, saya mengerti. Wajar jika alurnya masih terasa abstrak. Terkadang, kita perlu membangun semua komponennya terlebih dahulu baru bisa melihat gambaran besarnya.
+
+Jangan khawatir, saya akan berikan gambaran singkat bagaimana kamu akan menggunakannya nanti, sebelum kita lanjut.
+
+Gambaran Singkat Penggunaan Aplikasi Sscrap Nantinya
+Bayangkan skenario ini dalam beberapa minggu ke depan:
+
+1.  Input Target: Kamu buka Panel Admin Sscrap-mu yang sudah modern itu. Kamu masuk ke bagian Target Profiles dan klik "Add Target Profile". Kamu isi formulirnya: Platform: Instagram, Username: jokowi. Lalu kamu klik Save.
+
+2.  Eksekusi Scraper: Kamu buka terminal dan menjalankan perintah baru yang akan kita buat, misalnya: python manage.py scrape_instagram --username jokowi.
+
+3.  Proses Ajaib: Di belakang layar, skrip Selenium-mu akan:
+
+    - Membuka browser.
+    - (Nantinya) Melakukan login ke akun Instagram-mu.
+    - Mengetik instagram.com/jokowi di address bar.
+    - Mengambil data bio, jumlah followers, dll., lalu memperbarui data TargetProfile "jokowi" di database.
+    - Mulai men-scroll ke bawah, mengambil caption dan URL gambar dari setiap postingan. Setiap postingan yang ditemukan akan disimpan sebagai data baru di model ScrapedPost yang terhubung ke "jokowi".
+
+4.  Verifikasi Hasil: Kamu kembali ke Panel Admin, refresh halaman Target Profiles, dan melihat data "jokowi" sudah terisi lengkap. Kamu lalu klik Scraped Posts dan melihat puluhan postingan baru dari akun tersebut sudah tersimpan rapi di database-mu.
+
+Semoga gambaran singkat itu membantu. Setiap langkah yang kita ambil sekarang adalah untuk membangun mekanisme di atas.
