@@ -30,6 +30,7 @@ class ScrapedPost(models.Model):
     caption = models.TextField(null=True, blank=True, help_text="Teks atau caption dari postingan")
     media_url = models.URLField(null=True, blank=True, help_text="URL ke gambar atau video utama")
     posted_at = models.DateTimeField(null=True, blank=True, help_text="Waktu postingan ini diunggah")
+    description = models.TextField(null=True, blank=True, help_text="Deskripsi lengkap video")
 
     def __str__(self):
         return f"Postingan dari {self.profile.username} di {self.post_url}"
