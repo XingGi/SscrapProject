@@ -31,6 +31,7 @@ class ScrapedPost(models.Model):
     media_url = models.URLField(null=True, blank=True, help_text="URL ke gambar atau video utama")
     posted_at = models.DateTimeField(null=True, blank=True, help_text="Waktu postingan ini diunggah")
     description = models.TextField(null=True, blank=True, help_text="Deskripsi lengkap video")
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return f"Postingan dari {self.profile.username} di {self.post_url}"
@@ -41,6 +42,7 @@ class ScrapedComment(models.Model):
     commenter_name = models.CharField(max_length=255)
     comment_text = models.TextField()
     commented_at = models.DateTimeField(auto_now_add=True)
+    follow_up = models.BooleanField(default=False, help_text="Tandai jika komentar ini perlu di-follow up")
 
     def __str__(self):
         return f"Komentar oleh {self.commenter_name} pada postingan {self.post.id}"
