@@ -16,4 +16,6 @@ urlpatterns = [
     path('trigger/youtube/', views.trigger_youtube_scrape_view, name='trigger_youtube_scrape'),
     
     path('comment/toggle-follow-up/<int:comment_id>/', views.toggle_follow_up_view, name='toggle_follow_up'),
+    
+    path('trigger/youtube-detail/<int:post_id>/', views.trigger_youtube_detail_scrape_view, name='trigger_youtube_detail_scrape'),
 ]

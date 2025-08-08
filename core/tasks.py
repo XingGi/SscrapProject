@@ -93,3 +93,57 @@ def run_Youtube_task(self, query, video_type):
         driver.quit()
     
     return f'Tugas selesai. {saved_count} video baru diproses.'
+
+@shared_task(bind=True)
+def scrape_youtube_detail_task(self, post_id):
+    """Mengunjungi satu URL video dan men-scrape komentarnya."""
+    try:
+        post = ScrapedPost.objects.get(id=post_id)
+        print(f"Memulai pengambilan detail untuk: {post.caption[:40]}...")
+    except ScrapedPost.DoesNotExist:
+        print(f"GAGAL: Post dengan ID {post_id} tidak ditemukan.")
+        return "Tugas gagal, post tidak ada."
+
+    chrome_options = Options()
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    # chrome_options.add_argument("--headless")
+    driver = webdriver.Chrome(service=Service('./chromedriver.exe'), options=chrome_options)
+    
+    try:
+        driver.get(post.post_url)
+        print(f"  -> Halaman dibuka: {post.post_url}")
+        time.sleep(3) # Beri waktu untuk layout awal
+
+        # Scroll ke bawah untuk memuat komentar
+        driver.execute_script("window.scrollTo(0, 800);")
+        print("  -> Melakukan scroll untuk memuat komentar...")
+        time.sleep(5) # Tunggu komentar dimuat oleh JavaScript
+
+        # Ambil semua container komentar
+        comment_threads = driver.find_elements(By.TAG_NAME, 'ytd-comment-thread-renderer')
+        print(f"  -> Menemukan {len(comment_threads)} container komentar.")
+        
+        saved_count = 0
+        for comment in comment_threads[:15]: # Batasi 15 komentar pertama agar tidak terlalu lama
+            try:
+                author_element = comment.find_element(By.ID, "author-text")
+                comment_element = comment.find_element(By.ID, "content-text")
+                
+                author_name = author_element.text
+                comment_text = comment_element.text
+
+                # Simpan komentar ke database
+                ScrapedComment.objects.get_or_create(
+                    post=post,
+                    commenter_name=author_name,
+                    defaults={'comment_text': comment_text}
+                )
+                saved_count += 1
+            except NoSuchElementException:
+                continue
+        
+        print(f"  -> {saved_count} komentar berhasil disimpan.")
+        return f"Tugas selesai. {saved_count} komentar disimpan untuk post ID {post_id}."
+
+    finally:
+        driver.quit()

@@ -1,9 +1,9 @@
 # core/views.py (Versi Baru)
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
-from .tasks import run_Youtube_task
+from .tasks import run_Youtube_task, scrape_youtube_detail_task
 from .models import ScrapedPost, ScrapedComment, Platform
 
 def dashboard_view(request):
@@ -74,3 +74,8 @@ def toggle_follow_up_view(request, comment_id):
 
     # Jika metodenya bukan POST, tolak request
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+
+def trigger_youtube_detail_scrape_view(request, post_id):
+    scrape_youtube_detail_task.delay(post_id)
+    messages.success(request, f"Tugas pengambilan komentar untuk video ini telah dimulai di latar belakang.")
+    return redirect('post_comments_detail', post_id=post_id)

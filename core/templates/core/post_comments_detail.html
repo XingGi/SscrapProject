@@ -1,7 +1,11 @@
-{% extends 'core/base.html' %} {% block title %}Detail Komentar - {{ post.caption|truncatechars:30 }}{% endblock %} {% block content %}
+{% extends 'core/base.html' %} {% block title %}Detail Komentar - {{ post.caption|truncatechars:30 }}{% endblock %} {% block content %} {% if messages %} {% for message in messages %}
+<div class="alert alert-info mt-3">{{ message }}</div>
+{% endfor %} {% endif %}
+
 <div class="card mb-4">
-  <div class="card-header">
+  <div class="card-header d-flex justify-content-between align-items-center">
     <h4>Detail Video</h4>
+    <a href="{% url 'trigger_youtube_detail_scrape' post.id %}" class="btn btn-sm btn-success">Ambil/Perbarui Komentar Video Ini</a>
   </div>
   <div class="card-body">
     <h5 class="card-title">{{ post.caption }}</h5>
@@ -37,7 +41,7 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="3" class="text-center">Belum ada komentar yang di-scrape untuk video ini.</td>
+            <td colspan="3" class="text-center">Belum ada komentar yang di-scrape untuk video ini. Klik tombol "Ambil Komentar" di atas.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -49,7 +53,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     // Ambil CSRF token yang dibutuhkan Django untuk keamanan
-    const csrfToken = "{{ csrf_token }}";
+    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]") ? document.querySelector("[name=csrfmiddlewaretoken]").value : "{{ csrf_token }}";
 
     // Cari semua checkbox dengan class 'follow-up-checkbox'
     const checkboxes = document.querySelectorAll(".follow-up-checkbox");
@@ -71,7 +75,6 @@
           .then((data) => {
             if (data.status === "ok") {
               console.log(`Status follow-up untuk comment ID ${commentId} berhasil diubah menjadi ${data.new_value}`);
-              // Sukses! Tidak perlu melakukan apa-apa, checkbox sudah di state yang benar.
             } else {
               console.error("Gagal mengupdate status:", data.message);
               // Jika gagal, kembalikan checkbox ke state semula untuk konsistensi
